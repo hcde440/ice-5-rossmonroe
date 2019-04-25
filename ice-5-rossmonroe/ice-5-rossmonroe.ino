@@ -8,9 +8,9 @@
 //Some immutable definitions/constants
 #define ssid "University of Washington"
 #define pass ""
-#define mqtt_server "mediatedspaces.net"
+#define mqtt_server "broker.mqttdashboard.com"
 #define mqtt_name "hcdeiot"
-#define mqtt_pass "esp8266"
+#define mqtt_pass ""
 
 //ML115A2 includes
 #include <Adafruit_MPL115A2.h>
@@ -150,6 +150,7 @@ void publishSensors() {
   Serial.print("Pressure: "); Serial.print(pressure); Serial.println(" kPa"); // rints pressure data to serial
   Serial.print("Temp: "); Serial.print(temp); Serial.println(" C"); //prints temperature data to serial
 
+  //reads the SI sensor and saves the data to variabls.
   float siHumi = siSensor.readHumidity();
   float siTemp = siSensor.readTemperature();
   Serial.print("Humidity: ");
@@ -158,19 +159,21 @@ void publishSensors() {
   Serial.println(siTemp, 2);
   delay(1000);
 
-  char mplTemp[4];
-  char mplPressure[6];
+  //creates char variables
+  char mplTemp[7];
+  char mplPressure[7];
   char si7021Temp[7];
   char si7021Humi[7];
-  
-  String(temp).toCharArray(mplTemp,4); //converts to char array
-  String(pressure).toCharArray(mplPressure,6); //converts to char array
+
+  //converts the 
+  String(temp).toCharArray(mplTemp,7); //converts to char array
+  String(pressure).toCharArray(mplPressure,7); //converts to char array
   String(siTemp).toCharArray(si7021Temp,7);
   String(siHumi).toCharArray(si7021Humi,7);
   char message[400];
 
   sprintf(message, "{\"mplTemp\": \"%s\", \"mplPressure\": \"%s\", \"siTemp\": \"%s\", \"siHumi\": \"%s\" }", mplTemp, mplPressure, si7021Temp, si7021Humi);
-  mqtt.publish("fromRoss/Senors", message);
+  mqtt.publish("fromRoss/Sensors", message);
   Serial.println("publishing");
   timer = millis();
 
